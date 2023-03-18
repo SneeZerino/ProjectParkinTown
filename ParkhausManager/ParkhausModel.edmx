@@ -1,0 +1,587 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ParkhausModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Dauermieter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParkplatzNummer" Type="int" Nullable="false" />
+          <Property Name="Stockwerk_Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Gesperrt" Type="bit" />
+        </EntityType>
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Event" Type="bit" Nullable="false" />
+          <Property Name="Typ" Type="bit" Nullable="false" />
+          <Property Name="Dauermieter_Id" Type="int" />
+          <Property Name="Zeit" Type="datetime" />
+          <Property Name="ParkplatzNummer" Type="int" Nullable="false" />
+          <Property Name="Stockwerk_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Parkhaus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Ort" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Tagestarif" Type="float" />
+          <Property Name="Monatsmiete" Type="float" />
+        </EntityType>
+        <EntityType Name="Stockwerk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="AnzahlParkplaetze" Type="int" />
+          <Property Name="Parkhaus_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tarif">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Typ" Type="bit" />
+          <Property Name="Von" Type="time" Precision="7" />
+          <Property Name="Bis" Type="time" Precision="7" />
+          <Property Name="Preis" Type="float" />
+          <Property Name="Parkhaus_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Ticket">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParkplatzNummer" Type="int" Nullable="false" />
+          <Property Name="Stockwerk_Id" Type="int" Nullable="false" />
+          <Property Name="Eintrittszeit" Type="datetime" />
+          <Property Name="Bezahlt" Type="bit" />
+          <Property Name="BezahltZeit" Type="datetime" />
+          <Property Name="Benutzt" Type="bit" />
+        </EntityType>
+        <EntityType Name="Zahlung">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Typ" Type="bit" Nullable="false" />
+          <Property Name="Kosten" Type="float" />
+          <Property Name="Zeit" Type="datetime" />
+          <Property Name="Ticket_Id" Type="int" />
+          <Property Name="Dauermieter_Id" Type="int" />
+          <Property Name="Stockwerk_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Dauermiet__Stock__534D60F1">
+          <End Role="Stockwerk" Type="Self.Stockwerk" Multiplicity="1" />
+          <End Role="Dauermieter" Type="Self.Dauermieter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Dauermieter">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Log__Dauermieter__571DF1D5">
+          <End Role="Dauermieter" Type="Self.Dauermieter" Multiplicity="0..1" />
+          <End Role="Log" Type="Self.Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dauermieter">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="Dauermieter_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Log__Stockwerk_I__5812160E">
+          <End Role="Stockwerk" Type="Self.Stockwerk" Multiplicity="1" />
+          <End Role="Log" Type="Self.Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Tarif__Parkhaus___44FF419A">
+          <End Role="Parkhaus" Type="Self.Parkhaus" Multiplicity="1" />
+          <End Role="Tarif" Type="Self.Tarif" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Parkhaus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tarif">
+              <PropertyRef Name="Parkhaus_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Ticket__Stockwer__4F7CD00D">
+          <End Role="Stockwerk" Type="Self.Stockwerk" Multiplicity="1" />
+          <End Role="Ticket" Type="Self.Ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Ticket">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Zahlung__Dauermi__70DDC3D8">
+          <End Role="Dauermieter" Type="Self.Dauermieter" Multiplicity="0..1" />
+          <End Role="Zahlung" Type="Self.Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dauermieter">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Dauermieter_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Zahlung__Stockwe__71D1E811">
+          <End Role="Stockwerk" Type="Self.Stockwerk" Multiplicity="1" />
+          <End Role="Zahlung" Type="Self.Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Zahlung__Ticket___6FE99F9F">
+          <End Role="Ticket" Type="Self.Ticket" Multiplicity="0..1" />
+          <End Role="Zahlung" Type="Self.Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ticket">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Ticket_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ParkhausModelStoreContainer">
+          <EntitySet Name="Dauermieter" EntityType="Self.Dauermieter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Parkhaus" EntityType="Self.Parkhaus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stockwerk" EntityType="Self.Stockwerk" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tarif" EntityType="Self.Tarif" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Ticket" EntityType="Self.Ticket" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Zahlung" EntityType="Self.Zahlung" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Dauermiet__Stock__534D60F1" Association="Self.FK__Dauermiet__Stock__534D60F1">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Log__Dauermieter__571DF1D5" Association="Self.FK__Log__Dauermieter__571DF1D5">
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Log__Stockwerk_I__5812160E" Association="Self.FK__Log__Stockwerk_I__5812160E">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Tarif__Parkhaus___44FF419A" Association="Self.FK__Tarif__Parkhaus___44FF419A">
+            <End Role="Parkhaus" EntitySet="Parkhaus" />
+            <End Role="Tarif" EntitySet="Tarif" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Ticket__Stockwer__4F7CD00D" Association="Self.FK__Ticket__Stockwer__4F7CD00D">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Ticket" EntitySet="Ticket" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Zahlung__Dauermi__70DDC3D8" Association="Self.FK__Zahlung__Dauermi__70DDC3D8">
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Zahlung__Stockwe__71D1E811" Association="Self.FK__Zahlung__Stockwe__71D1E811">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Zahlung__Ticket___6FE99F9F" Association="Self.FK__Zahlung__Ticket___6FE99F9F">
+            <End Role="Ticket" EntitySet="Ticket" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ParkhausModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Event" Type="Boolean" Nullable="false" />
+          <Property Name="Zeit" Type="DateTime" Precision="3" />
+          <Property Name="ParkplatzNummer" Type="Int32" Nullable="false" />
+          <Property Name="Typ" Type="Boolean" Nullable="false" />
+          <Property Name="Dauermieter_Id" Type="Int32" />
+          <Property Name="Stockwerk_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Dauermieter" Relationship="ParkhausModel.FK__Log__Dauermieter__571DF1D5" FromRole="Log" ToRole="Dauermieter" />
+          <NavigationProperty Name="Stockwerk" Relationship="ParkhausModel.FK__Log__Stockwerk_I__5812160E" FromRole="Log" ToRole="Stockwerk" />
+        </EntityType>
+        <EntityType Name="Parkhaus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Ort" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Stockwerk" Relationship="Self.FK__Stockwerk__Parkh__4316F928" FromRole="Parkhaus" ToRole="Stockwerk" />
+          <Property Name="Tagestarif" Type="Double" />
+          <Property Name="Monatsmiete" Type="Double" />
+          <NavigationProperty Name="Tarif" Relationship="ParkhausModel.FK__Tarif__Parkhaus___44FF419A" FromRole="Parkhaus" ToRole="Tarif" />
+        </EntityType>
+        <EntityType Name="Stockwerk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Parkhaus_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Parkhaus" Relationship="Self.FK__Stockwerk__Parkh__4316F928" FromRole="Stockwerk" ToRole="Parkhaus" />
+          <Property Name="AnzahlParkplaetze" Type="Int32" />
+          <NavigationProperty Name="Dauermieter" Relationship="ParkhausModel.FK__Dauermiet__Stock__4BAC3F29" FromRole="Stockwerk" ToRole="Dauermieter" />
+          <NavigationProperty Name="Ticket" Relationship="ParkhausModel.FK__Ticket__Stockwer__4F7CD00D" FromRole="Stockwerk" ToRole="Ticket" />
+          <NavigationProperty Name="Log" Relationship="ParkhausModel.FK__Log__Stockwerk_I__5812160E" FromRole="Stockwerk" ToRole="Log" />
+          <NavigationProperty Name="Zahlung" Relationship="ParkhausModel.FK__Zahlung__Stockwe__71D1E811" FromRole="Stockwerk" ToRole="Zahlung" />
+        </EntityType>
+        <Association Name="FK__Stockwerk__Parkh__4316F928">
+          <End Role="Parkhaus" Type="Self.Parkhaus" Multiplicity="1" />
+          <End Role="Stockwerk" Type="Self.Stockwerk" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Parkhaus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Stockwerk">
+              <PropertyRef Name="Parkhaus_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ParkhausEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Log" EntityType="Self.Log" />
+          <EntitySet Name="Parkhaus" EntityType="Self.Parkhaus" />
+          <EntitySet Name="Stockwerk" EntityType="Self.Stockwerk" />
+          <AssociationSet Name="FK__Stockwerk__Parkh__4316F928" Association="Self.FK__Stockwerk__Parkh__4316F928">
+            <End Role="Parkhaus" EntitySet="Parkhaus" />
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+          </AssociationSet>
+          <EntitySet Name="Tarif" EntityType="ParkhausModel.Tarif" />
+          <AssociationSet Name="FK__Tarif__Parkhaus___44FF419A" Association="ParkhausModel.FK__Tarif__Parkhaus___44FF419A">
+            <End Role="Parkhaus" EntitySet="Parkhaus" />
+            <End Role="Tarif" EntitySet="Tarif" />
+          </AssociationSet>
+          <EntitySet Name="Dauermieter" EntityType="ParkhausModel.Dauermieter" />
+          <EntitySet Name="Ticket" EntityType="ParkhausModel.Ticket" />
+          <AssociationSet Name="FK__Dauermiet__Stock__4BAC3F29" Association="ParkhausModel.FK__Dauermiet__Stock__4BAC3F29">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Ticket__Stockwer__4F7CD00D" Association="ParkhausModel.FK__Ticket__Stockwer__4F7CD00D">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Ticket" EntitySet="Ticket" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Log__Dauermieter__571DF1D5" Association="ParkhausModel.FK__Log__Dauermieter__571DF1D5">
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Log__Stockwerk_I__5812160E" Association="ParkhausModel.FK__Log__Stockwerk_I__5812160E">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Log" EntitySet="Log" />
+          </AssociationSet>
+          <EntitySet Name="Zahlung" EntityType="ParkhausModel.Zahlung" />
+          <AssociationSet Name="FK__Zahlung__Dauermi__70DDC3D8" Association="ParkhausModel.FK__Zahlung__Dauermi__70DDC3D8">
+            <End Role="Dauermieter" EntitySet="Dauermieter" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Zahlung__Stockwe__71D1E811" Association="ParkhausModel.FK__Zahlung__Stockwe__71D1E811">
+            <End Role="Stockwerk" EntitySet="Stockwerk" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Zahlung__Ticket___6FE99F9F" Association="ParkhausModel.FK__Zahlung__Ticket___6FE99F9F">
+            <End Role="Ticket" EntitySet="Ticket" />
+            <End Role="Zahlung" EntitySet="Zahlung" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Tarif">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Typ" Type="Boolean" />
+          <Property Name="Von" Type="Time" Precision="7" />
+          <Property Name="Bis" Type="Time" Precision="7" />
+          <Property Name="Preis" Type="Double" />
+          <Property Name="Parkhaus_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Parkhaus" Relationship="ParkhausModel.FK__Tarif__Parkhaus___44FF419A" FromRole="Tarif" ToRole="Parkhaus" />
+        </EntityType>
+        <Association Name="FK__Tarif__Parkhaus___44FF419A">
+          <End Type="ParkhausModel.Parkhaus" Role="Parkhaus" Multiplicity="1" />
+          <End Type="ParkhausModel.Tarif" Role="Tarif" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Parkhaus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tarif">
+              <PropertyRef Name="Parkhaus_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Dauermieter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParkplatzNummer" Type="Int32" Nullable="false" />
+          <Property Name="Stockwerk_Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Gesperrt" Type="Boolean" />
+          <NavigationProperty Name="Stockwerk" Relationship="ParkhausModel.FK__Dauermiet__Stock__4BAC3F29" FromRole="Dauermieter" ToRole="Stockwerk" />
+          <NavigationProperty Name="Log" Relationship="ParkhausModel.FK__Log__Dauermieter__571DF1D5" FromRole="Dauermieter" ToRole="Log" />
+          <NavigationProperty Name="Zahlung" Relationship="ParkhausModel.FK__Zahlung__Dauermi__70DDC3D8" FromRole="Dauermieter" ToRole="Zahlung" />
+        </EntityType>
+        <EntityType Name="Ticket">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParkplatzNummer" Type="Int32" Nullable="false" />
+          <Property Name="Stockwerk_Id" Type="Int32" Nullable="false" />
+          <Property Name="Eintrittszeit" Type="DateTime" Precision="3" />
+          <Property Name="Bezahlt" Type="Boolean" />
+          <Property Name="BezahltZeit" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Stockwerk" Relationship="ParkhausModel.FK__Ticket__Stockwer__4F7CD00D" FromRole="Ticket" ToRole="Stockwerk" />
+          <Property Name="Benutzt" Type="Boolean" />
+          <NavigationProperty Name="Zahlung" Relationship="ParkhausModel.FK__Zahlung__Ticket___6FE99F9F" FromRole="Ticket" ToRole="Zahlung" />
+        </EntityType>
+        <Association Name="FK__Dauermiet__Stock__4BAC3F29">
+          <End Type="ParkhausModel.Stockwerk" Role="Stockwerk" Multiplicity="1" />
+          <End Type="ParkhausModel.Dauermieter" Role="Dauermieter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Dauermieter">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Ticket__Stockwer__4F7CD00D">
+          <End Type="ParkhausModel.Stockwerk" Role="Stockwerk" Multiplicity="1" />
+          <End Type="ParkhausModel.Ticket" Role="Ticket" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Ticket">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Log__Dauermieter__571DF1D5">
+          <End Type="ParkhausModel.Dauermieter" Role="Dauermieter" Multiplicity="0..1" />
+          <End Type="ParkhausModel.Log" Role="Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dauermieter">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="Dauermieter_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Log__Stockwerk_I__5812160E">
+          <End Type="ParkhausModel.Stockwerk" Role="Stockwerk" Multiplicity="1" />
+          <End Type="ParkhausModel.Log" Role="Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Log">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Zahlung">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Typ" Type="Boolean" Nullable="false" />
+          <Property Name="Kosten" Type="Double" />
+          <Property Name="Zeit" Type="DateTime" Precision="3" />
+          <Property Name="Ticket_Id" Type="Int32" />
+          <Property Name="Dauermieter_Id" Type="Int32" />
+          <Property Name="Stockwerk_Id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Dauermieter" Relationship="ParkhausModel.FK__Zahlung__Dauermi__70DDC3D8" FromRole="Zahlung" ToRole="Dauermieter" />
+          <NavigationProperty Name="Stockwerk" Relationship="ParkhausModel.FK__Zahlung__Stockwe__71D1E811" FromRole="Zahlung" ToRole="Stockwerk" />
+          <NavigationProperty Name="Ticket" Relationship="ParkhausModel.FK__Zahlung__Ticket___6FE99F9F" FromRole="Zahlung" ToRole="Ticket" />
+        </EntityType>
+        <Association Name="FK__Zahlung__Dauermi__70DDC3D8">
+          <End Type="ParkhausModel.Dauermieter" Role="Dauermieter" Multiplicity="0..1" />
+          <End Type="ParkhausModel.Zahlung" Role="Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dauermieter">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Dauermieter_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Zahlung__Stockwe__71D1E811">
+          <End Type="ParkhausModel.Stockwerk" Role="Stockwerk" Multiplicity="1" />
+          <End Type="ParkhausModel.Zahlung" Role="Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stockwerk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Stockwerk_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Zahlung__Ticket___6FE99F9F">
+          <End Type="ParkhausModel.Ticket" Role="Ticket" Multiplicity="0..1" />
+          <End Type="ParkhausModel.Zahlung" Role="Zahlung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ticket">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Zahlung">
+              <PropertyRef Name="Ticket_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ParkhausModelStoreContainer" CdmEntityContainer="ParkhausEntities">
+          <EntitySetMapping Name="Log">
+            <EntityTypeMapping TypeName="ParkhausModel.Log">
+              <MappingFragment StoreEntitySet="Log">
+                <ScalarProperty Name="Stockwerk_Id" ColumnName="Stockwerk_Id" />
+                <ScalarProperty Name="Dauermieter_Id" ColumnName="Dauermieter_Id" />
+                <ScalarProperty Name="Typ" ColumnName="Typ" />
+                <ScalarProperty Name="ParkplatzNummer" ColumnName="ParkplatzNummer" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Event" ColumnName="Event" />
+                <ScalarProperty Name="Zeit" ColumnName="Zeit" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Parkhaus">
+            <EntityTypeMapping TypeName="ParkhausModel.Parkhaus">
+              <MappingFragment StoreEntitySet="Parkhaus">
+                <ScalarProperty Name="Monatsmiete" ColumnName="Monatsmiete" />
+                <ScalarProperty Name="Tagestarif" ColumnName="Tagestarif" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Ort" ColumnName="Ort" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stockwerk">
+            <EntityTypeMapping TypeName="ParkhausModel.Stockwerk">
+              <MappingFragment StoreEntitySet="Stockwerk">
+                <ScalarProperty Name="AnzahlParkplaetze" ColumnName="AnzahlParkplaetze" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Parkhaus_Id" ColumnName="Parkhaus_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tarif">
+            <EntityTypeMapping TypeName="ParkhausModel.Tarif">
+              <MappingFragment StoreEntitySet="Tarif">
+                <ScalarProperty Name="Parkhaus_Id" ColumnName="Parkhaus_Id" />
+                <ScalarProperty Name="Preis" ColumnName="Preis" />
+                <ScalarProperty Name="Bis" ColumnName="Bis" />
+                <ScalarProperty Name="Von" ColumnName="Von" />
+                <ScalarProperty Name="Typ" ColumnName="Typ" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Dauermieter">
+            <EntityTypeMapping TypeName="ParkhausModel.Dauermieter">
+              <MappingFragment StoreEntitySet="Dauermieter">
+                <ScalarProperty Name="Gesperrt" ColumnName="Gesperrt" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Stockwerk_Id" ColumnName="Stockwerk_Id" />
+                <ScalarProperty Name="ParkplatzNummer" ColumnName="ParkplatzNummer" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ticket">
+            <EntityTypeMapping TypeName="ParkhausModel.Ticket">
+              <MappingFragment StoreEntitySet="Ticket">
+                <ScalarProperty Name="Benutzt" ColumnName="Benutzt" />
+                <ScalarProperty Name="BezahltZeit" ColumnName="BezahltZeit" />
+                <ScalarProperty Name="Bezahlt" ColumnName="Bezahlt" />
+                <ScalarProperty Name="Eintrittszeit" ColumnName="Eintrittszeit" />
+                <ScalarProperty Name="Stockwerk_Id" ColumnName="Stockwerk_Id" />
+                <ScalarProperty Name="ParkplatzNummer" ColumnName="ParkplatzNummer" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Zahlung">
+            <EntityTypeMapping TypeName="ParkhausModel.Zahlung">
+              <MappingFragment StoreEntitySet="Zahlung">
+                <ScalarProperty Name="Stockwerk_Id" ColumnName="Stockwerk_Id" />
+                <ScalarProperty Name="Dauermieter_Id" ColumnName="Dauermieter_Id" />
+                <ScalarProperty Name="Ticket_Id" ColumnName="Ticket_Id" />
+                <ScalarProperty Name="Zeit" ColumnName="Zeit" />
+                <ScalarProperty Name="Kosten" ColumnName="Kosten" />
+                <ScalarProperty Name="Typ" ColumnName="Typ" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Kein" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

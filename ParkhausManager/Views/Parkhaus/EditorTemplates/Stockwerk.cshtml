@@ -1,0 +1,37 @@
+﻿@model ParkhausManager.Stockwerk
+
+<div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <h4>@Model.Name (@Model.AnzahlParkplaetze Parkplätze)</h4>
+            <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#stockwerk_@Model.Id"><span class="glyphicon glyphicon-resize-vertical"></span> Show / Hide</button>
+        </div>
+    </div>
+    <div id="stockwerk_@Model.Id" class="collapse stockwerk">
+        @Html.HiddenFor(stockwerk => stockwerk.Id)
+        @Html.HiddenFor(stockwerk => stockwerk.Parkhaus_Id)
+        <div class="form-group">
+            @Html.LabelFor(stockwerk => stockwerk.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(stockwerk => stockwerk.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(stockwerk => stockwerk.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(stockwerk => stockwerk.AnzahlParkplaetze, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(stockwerk => stockwerk.AnzahlParkplaetze, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(stockwerk => stockwerk.AnzahlParkplaetze, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <a href="@Url.Action("RemoveStockwerk", "Parkhaus", new { stockwerkId = Model.Id, parkhausId = Model.Parkhaus_Id })" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-minus-sign"></span> Stockwerk entfernen
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

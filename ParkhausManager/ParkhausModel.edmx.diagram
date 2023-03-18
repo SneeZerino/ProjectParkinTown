@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="875831a4390b461abcd101970832f289" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="ParkhausModel.Log" Width="1.5" PointX="4.25" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ParkhausModel.Parkhaus" Width="1.5" PointX="1" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ParkhausModel.Stockwerk" Width="1.5" PointX="3.125" PointY="5" IsExpanded="true" />
+        <AssociationConnector Association="ParkhausModel.FK__Stockwerk__Parkh__4316F928" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ParkhausModel.Tarif" Width="1.5" PointX="1" PointY="7.75" />
+        <AssociationConnector Association="ParkhausModel.FK__Tarif__Parkhaus___44FF419A" />
+        <EntityTypeShape EntityType="ParkhausModel.Dauermieter" Width="1.5" PointX="5.125" PointY="5" />
+        <EntityTypeShape EntityType="ParkhausModel.Ticket" Width="1.5" PointX="2.75" PointY="8.5" />
+        <AssociationConnector Association="ParkhausModel.FK__Dauermiet__Stock__4BAC3F29" />
+        <AssociationConnector Association="ParkhausModel.FK__Ticket__Stockwer__4F7CD00D" />
+        <AssociationConnector Association="ParkhausModel.FK__Log__Dauermieter__571DF1D5" />
+        <AssociationConnector Association="ParkhausModel.FK__Log__Stockwerk_I__5812160E" />
+        <EntityTypeShape EntityType="ParkhausModel.Zahlung" Width="1.5" PointX="4.75" PointY="8.375" />
+        <AssociationConnector Association="ParkhausModel.FK__Zahlung__Dauermi__70DDC3D8" />
+        <AssociationConnector Association="ParkhausModel.FK__Zahlung__Stockwe__71D1E811" ManuallyRouted="false" >
+        </AssociationConnector>
+        <AssociationConnector Association="ParkhausModel.FK__Zahlung__Ticket___6FE99F9F" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

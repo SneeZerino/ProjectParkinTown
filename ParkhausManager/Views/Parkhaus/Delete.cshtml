@@ -1,0 +1,48 @@
+﻿@model ParkhausManager.Parkhaus
+
+@{
+    ViewBag.Title = "Löschen";
+}
+
+<h2>Löschen</h2>
+
+<h3>Möchetest du das Parkhaus wirklich löschen?</h3>
+<div>
+    <h4>Parkhaus Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ort)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+
+        if(ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default @(ViewBag.Error != null ? "disabled" : "")" /> |
+            @Html.ActionLink("Zurück", "Index")
+        </div>
+    }
+</div>

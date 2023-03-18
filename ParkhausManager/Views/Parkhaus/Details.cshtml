@@ -1,0 +1,110 @@
+﻿@using ParkhausManager.Helpers
+@model ParkhausManager.Parkhaus
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Parkhaus</h4>
+    <hr />
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ort)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ort)
+        </dd>
+
+    </dl>
+    <div class="parkplatz-legende Frei"></div><div class="legende-text">Frei</div>
+    <div class="parkplatz-legende Gelegenheitsnutzer"></div><div class="legende-text">Gelegenheitsnutzer</div>
+    <div class="parkplatz-legende Dauermieter"></div><div class="legende-text">Dauermieter</div>
+    <br />
+    @{
+        var count = 0;
+        foreach (var stockwerk in Model.Stockwerk)
+        {
+            var stockwerkFloor = count * 100;
+            <p class="stockwerk-title">@stockwerk.Name</p>
+            <div class="stockwerk">
+                @for (var i = 0; i < stockwerk.AnzahlParkplaetze; i++)
+                {
+                    var parkplatz = stockwerkFloor + i;
+                    var typClass = ViewBag.Parkplaetze[parkplatz];
+
+                    <div class="parkplatz @typClass">
+                        @parkplatz
+                    </div>
+                }
+            </div>
+            count++;
+        }
+
+
+    }
+
+</div>
+<p>
+    @Html.ActionLink("Bearbeiten", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Zurück zur Liste", "Index")
+</p>
+
+<style>
+    .stockwerk-title {
+        font-weight: bold;
+    }
+
+    .stockwerk {
+        width: 300px;
+        min-height: 100px;
+    }
+
+    .parkplatz {
+        width: 25px;
+        height: 25px;
+        border: 1px solid gray;
+        float: left;
+        text-align: center;
+        line-height: 25px;
+        margin: 1px;
+        font-size: 11px;
+    }
+
+    .Frei {
+        background-color: white;
+    }
+
+    .Gelegenheitsnutzer {
+        background-color: skyblue;
+    }
+
+    .Dauermieter {
+        background-color: lightcoral;
+    }
+
+    .parkplatz-legende {
+        width: 25px;
+        height: 25px;
+        border: 1px solid gray;
+        float: left;
+        margin-right: 5px;
+    }
+
+    .legende-text {
+        height: 25px;
+        line-height: 25px;
+        margin: 5px;
+    }
+</style>

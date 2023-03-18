@@ -1,0 +1,198 @@
+﻿@model ParkhausManager.Models.AutomatenViewModel
+@{
+    ViewBag.Title = "Automaten";
+}
+
+<h2>Automaten</h2>
+
+<div class="container">
+    <div class="row">
+        <h4>Parkhaus wählen:</h4>
+        @Html.DropDownList("parkhaus", new SelectList(ViewBag.Parkhaeuser, "Id", "Name", ViewBag.SelectedParkhaus), htmlAttributes: new { @id = "parkhaus-select", @class = "form-control" })
+    </div>
+    <div class="row">
+        <div class="col-lg-4 border-right">
+            <h3>Einfahrt</h3>
+            <hr />
+
+            <div class="einfahrt-ticket">
+
+                <a style="height:50px;line-height:35px;" href="@Url.Action("GetTicket", "Automaten", new { parkhausId = ViewBag.SelectedParkhaus })" class="btn btn-default btn-success">Ticket lösen</a>
+
+                @if (Model.Ticket != null)
+                {
+
+                    <div style="height:215px; border: 1px solid gray; border-radius:5px; margin-top: 30px;padding:5px;">
+                        <p><strong>Digitales Ticket</strong></p>
+                        <p>Ticket-Nr: @Model.Ticket.Id</p>
+                        <p>Parkhaus: @Model.Ticket.Stockwerk.Parkhaus.Name</p>
+                        <p>Stockwerk: @Model.Ticket.Stockwerk.Name</p>
+                        <p>Parkplatznummer: @Model.Ticket.ParkplatzNummer </p>
+                        <p>Eintrittszeit: @Model.Ticket.Eintrittszeit</p>
+                        <p>Bezahlt: @Model.Ticket.Bezahlt</p>
+
+                    </div>
+                }
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.Error</div>
+
+                }
+
+
+            </div>
+            <hr />
+
+            @using (Html.BeginForm("EinfahrtScan", "Automaten", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken() 
+                
+                <div class="einfahrt-mieter">
+                    <input type="hidden" value="@ViewBag.SelectedParkhaus" name="SelectedParkhaus" />
+                    @Html.LabelFor(model => model.MieterCode, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.MieterCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MieterCode, "", new { @class = "text-danger" })
+                    <input style="height:50px;margin-top: 10px; margin-bottom:10px;" type="submit" value="Scan Code" class="btn btn-default btn-success" />
+                </div>
+                if (Model.Dauermieter != null)
+                {
+                    <div style="height:150px; border: 1px solid gray; border-radius:5px; margin-top: 30px;padding:5px;">
+                        <p><strong>Dauermieter Parkplatz</strong></p>
+                        <p>Parkhaus: @Model.Dauermieter.Stockwerk.Parkhaus.Name</p>
+                        <p>Stockwerk: @Model.Dauermieter.Stockwerk.Name</p>
+                        <p>Parkplatznummer: @Model.Dauermieter.ParkplatzNummer </p>
+                        <p>Eintrittszeit: @Model.Eintrittszeit</p>
+                    </div>
+                }
+                else if (ViewBag.DauermieterError != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.DauermieterError</div>
+                }
+            }
+            
+
+        </div>
+        <div class="col-lg-4 border-right">
+            <h3>Entwerten</h3>
+            <hr />
+            <div class="entwerten-ticket">
+                @using (Html.BeginForm("TicketEntwerten", "Automaten", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="einfahrt-mieter">
+                        <input type="hidden" value="@ViewBag.SelectedParkhaus" name="SelectedParkhaus" />
+                        @Html.LabelFor(model => model.TicketNummer, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.TicketNummer, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TicketNummer, "", new { @class = "text-danger" })
+                        <input style="height:50px;margin-top: 10px; margin-bottom:10px;" type="submit" value="Scan Ticket & Bezahlen" class="btn btn-default btn-success" />
+                    </div>
+                }
+                @if (Model.EntwertetesTicket != null)
+                {
+                    var bezahlt = (Model.EntwertetesTicket.Ticket.Bezahlt == true) ? "Ja" : "Nein";
+
+                    <div style="height:270px; border: 1px solid gray; border-radius:5px; margin-top: 30px;padding:5px;">
+                        <p><strong>Digitales Ticket (Entwertet)</strong></p>
+                        <p>Ticket-Nr: @Model.EntwertetesTicket.Ticket.Id</p>
+                        <p>Parkhaus: @Model.EntwertetesTicket.Ticket.Stockwerk.Parkhaus.Name</p>
+                        <p>Stockwerk: @Model.EntwertetesTicket.Ticket.Stockwerk.Name</p>
+                        <p>Parkplatznummer: @Model.EntwertetesTicket.Ticket.ParkplatzNummer </p>
+                        <p>Eintrittszeit: @Model.EntwertetesTicket.Ticket.Eintrittszeit</p>
+                        <p>Austrittszeit: @Model.EntwertetesTicket.Austrittszeit</p>
+                        <p>Bezahlt: @bezahlt</p>
+                        <p>Kosten: CHF @Model.EntwertetesTicket.Kosten.-</p>
+                    </div>
+                }
+
+                @if (ViewBag.TicketEntwertenError != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.TicketEntwertenError</div>
+
+                }
+            </div> 
+        </div>
+        <div class="col-lg-4">
+            <h3>Ausfahrt</h3>
+            <hr />
+            <div class="ausfahrt-ticket">
+                @using (Html.BeginForm("AusfahrtTicketScan", "Automaten", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" value="@ViewBag.SelectedParkhaus" name="SelectedParkhaus" />
+                    @Html.LabelFor(model => model.TicketNummerAusfahrt, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.TicketNummerAusfahrt, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TicketNummerAusfahrt, "", new { @class = "text-danger" })
+                    <input style="height:50px;margin-top: 10px; margin-bottom:10px;" type="submit" value="Scan Ticket" class="btn btn-default btn-success" />
+                }
+                @if (ViewBag.AusfahrtTicketSuccess != null)
+                {
+                    <div class="alert alert-success">@ViewBag.AusfahrtTicketSuccess</div>
+                }
+
+                @if (ViewBag.AusfahrtTicketError != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.AusfahrtTicketError</div>
+                }
+            </div>
+            <hr />
+            <div class="ausfahrt-dauermieter">
+                @using (Html.BeginForm("AusfahrtScan", "Automaten", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    <input type="hidden" value="@ViewBag.SelectedParkhaus" name="SelectedParkhaus" />
+                    @Html.LabelFor(model => model.MieterCodeAusfahrt, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.MieterCodeAusfahrt, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MieterCodeAusfahrt, "", new { @class = "text-danger" })
+                    <input style="height:50px;margin-top: 10px; margin-bottom:10px;" type="submit" value="Scan Code" class="btn btn-default btn-success" />
+
+                    if (ViewBag.AusfahrtDauermieterSuccess != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.AusfahrtDauermieterSuccess</div>
+                    }
+
+                    if (ViewBag.AusfahrtDauermieterError != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.AusfahrtDauermieterError</div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+
+
+
+    <script>
+
+        $(function () {
+            $('#parkhaus-select').change(function () {
+                window.location.href = "/Automaten/Index/" + $("#parkhaus-select option:selected").val()
+            });
+        });
+
+    </script>
+}
+
+<style>
+    .einfahrt-ticket {
+        height: 300px;
+    }
+
+    .ausfahrt-ticket {
+        height: 300px;
+    }
+    .border-right {
+        border-right: 1px solid rgb(238, 238, 238);
+    }
+    .entwerten-ticket {
+        height: 470px;
+    }
+</style>

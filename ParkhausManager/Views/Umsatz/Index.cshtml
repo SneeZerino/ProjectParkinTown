@@ -1,0 +1,148 @@
+﻿@model IEnumerable<ParkhausManager.Zahlung>
+
+@{
+    ViewBag.Title = "Umsatz";
+}
+
+<h2>Übersicht</h2>
+
+@using (Html.BeginForm("Index", "Umsatz", FormMethod.Get, new { id = "umsatz" }))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="parkhaus">Parkhaus</label>
+                @Html.DropDownList("parkhausId", ViewBag.ParkhausList as SelectList, "- Parkhaus -", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="jahr">Jahr</label>
+                @Html.DropDownList("jahr", ViewBag.JahrList as SelectList, "- Jahr -", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="monat">Monat</label>
+                @Html.DropDownList("monat", ((SelectList)ViewBag.MonatList), "- Monat -", new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <div style="height: 25px;"></div>
+                <input type="submit" value="Anzeigen" class="btn btn-default mt-25" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Typ">Besucher-Typ</label>
+                @Html.DropDownList("typ", ((SelectList)ViewBag.TypList), "- Besuchertyp -", new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+}
+@if (ViewBag.ParkhausError != null)
+{
+    <div class="alert alert-danger">@ViewBag.ParkhausError</div>
+}
+@if (ViewBag.JahrError != null)
+{
+    <div class="alert alert-danger">@ViewBag.JahrError</div>
+}
+
+
+@{
+    if (!string.IsNullOrEmpty(ViewBag.Monat) && ViewBag.Parkhaus != null && ViewBag.Jahr != null)
+    {
+        var monat = ((SelectList)ViewBag.MonatList).FirstOrDefault(m => m.Value == ViewBag.Monat).Text;
+        <h2>Monatsansicht @ViewBag.Jahr - @monat</h2>
+        <dl>
+            <dt>
+                Parkhaus
+            </dt>
+            <dd>
+                @{
+                    var test = (Parkhaus)ViewBag.Parkhaus;
+                    <text>@test.Name</text>
+                }
+            </dd>
+        </dl>
+
+        <table class="table table-striped">
+            <tr>
+
+                <th>
+                    Typ
+                </th>
+                <th>
+                    Zeit
+                </th>
+                <th>
+                    Kosten
+                </th>
+                <th>
+                    Ticket-Nr
+                </th>
+                <th>
+                    Dauermieter
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.Typ == false)
+                        {
+                            <text>Gelegenheitsnutzer</text>
+                        }
+                        else
+                        {
+                            <text>Dauermieter</text>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Zeit)
+                    </td>
+                    <td>
+                        CHF @Html.DisplayFor(modelItem => item.Kosten).-
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ticket.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dauermieter.Name)
+                </tr>
+            }
+
+        </table>
+        <p><strong>Total: CHF @ViewBag.TotalMonatsUmsatz.-</strong></p>
+    }
+    else if (ViewBag.Jahr != null && ViewBag.Parkhaus != null)
+    {
+        var count = 0;
+
+        <h2>Jahresansicht @ViewBag.Jahr</h2>
+        <table class="table table-striped">
+            <tr>
+                @foreach (var monat in (SelectList)ViewBag.MonatList)
+                {
+                    <th>@monat.Text</th>
+                }
+            </tr>
+            <tr>
+                @foreach (var monat in (SelectList)ViewBag.MonatList)
+                {
+                    var umsatzList = (List<double>)ViewBag.UmsatzPerMonatList;
+                    var umsatz = umsatzList[count];
+                    <td>CHF @umsatz.-</td>
+                    count++;
+                }
+            </tr>
+        </table>
+        <p><strong>Total: CHF @ViewBag.TotalJahresUmsatz.-</strong></p>
+
+    }
+}
